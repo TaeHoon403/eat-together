@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Member">
+	<insert id="signUp">
+		insert into member
+		values(#{id},#{pw},#{nickname},#{birth},#{account_email},0,sysdate)
+	</insert>
+
+	<select id="logIn" resultType="int">
+		select count(*) from member where
+		${targetColumn1}=#{targetValue1} and
+		${targetColumn2}=#{targetValue2}
+	</select>
+
+	<select id="selectMyInfo" resultType="coma.spring.dto.MemberDTO">
+		select * from member where
+		id=#{value}
+	</select>
+
+	<select id="isEmailAvailable" resultType="int">
+		select count(*) from
+		member where account_email=#{value}
+	</select>
+
+	<select id="isIdAvailable" resultType="int">
+		select count(*) from
+		member where id=#{value}
+	</select>
+	<update id="editMyInfo">
+		update member set ${targetColumn1}=#{targetValue1},
+		${targetColumn2}=#{targetValue2} where
+		${targetColumn3}=#{targetValue3}
+	</update>
+
+	<update id="editPw">
+		update member set ${targetColumn1}=#{targetValue1}
+		where ${targetColumn2}=#{targetValue2}
+	</update>
+	
+	<select id="emailCheck" resultType="coma.spring.dto.MemberDTO">
+		select * from member where
+		account_email=#{value}
+	</select>
+</mapper>

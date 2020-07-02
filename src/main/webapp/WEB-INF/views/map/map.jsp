@@ -206,6 +206,8 @@
     .review_comment i:hover{color:black;}
     .review_comment input[type=submit]{position:absolute;right:10px;bottom:30px;float:left;}
     .map_add{width:50px;height:50px;background-color:white;border-radius:50px;z-index:25;position:fixed;bottom:10px;right:10px;color:#ff9900;line-height:50px;}
+    .foodInsert{width:50px;height:50px;background-color:white;border-radius:50px;z-index:25;position:fixed;bottom:190px;right:10px;color:#ff9900;line-height:50px;}
+    .cafeInsert{width:50px;height:50px;background-color:white;border-radius:50px;z-index:25;position:fixed;bottom:250px;right:10px;color:#ff9900;line-height:50px;}
     .food{width:50px;height:50px;background-color:white;border-radius:50px;z-index:25;position:fixed;bottom:70px;right:10px;color:#ff9900;line-height:50px;}
     .cafe{width:50px;height:50px;background-color:white;border-radius:50px;z-index:25;position:fixed;bottom:130px;right:10px;color:#ff9900;line-height:50px;}
     .map_wrap {position:relative;width:100%;height:350px;}
@@ -217,6 +219,54 @@
 </style>
 <script>
 	$(function(){
+		// 인포윈도우를 표시하는 클로저를 만드는 함수입니다 
+		function makeOverListener(map, marker, infowindow) {
+		    return function() {
+		        infowindow.open(map, marker);
+		    };
+		}
+		// 인포윈도우를 닫는 클로저를 만드는 함수입니다 
+		function makeOutListener(infowindow) {
+		    return function() {
+		        infowindow.close();
+		    };
+		}
+		
+		$.getJSON("/resources/json/mapData.json",function(data){
+			var html = [];
+			var positions = [];
+
+			// 일반 맛집 이미지
+			var baseImageSrc = 'https://i.imgur.com/AvfFIoM.png', // 마커이미지의 주소입니다    
+		    baseImageSize = new kakao.maps.Size(40, 60), // 마커이미지의 크기입니다
+		    baseImageOption = {offset: new kakao.maps.Point(20, 69)}; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
+		    var baseMarkerImage = new kakao.maps.MarkerImage(baseImageSrc, baseImageSize, baseImageOption);
+			
+			$.each(data, function(i, item) { 
+				positions.push({
+		    	        content: '<div>'+ item.name +'</div>', 
+		    	        latlng: new kakao.maps.LatLng(item.lat, item.lng)
+		    	});
+			});
+			// $('#target').html(html.join(''));
+			
+			// 배열 DB에서 불러오기 
+
+		    for (var i = 0; i < positions.length; i ++) {
+			    var marker = new kakao.maps.Marker({
+			        map: map, 
+			        position: positions[i].latlng,
+			        image: baseMarkerImage
+			    });
+			    var iwRemoveable = true;
+			    var infowindow = new kakao.maps.InfoWindow({
+			        content: positions[i].content, 
+			        removable : iwRemoveable
+			    });
+			    kakao.maps.event.addListener(marker, 'click', makeOverListener(map, marker, infowindow));
+			}
+		});
+		
 		var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
 	    mapOption = { 
 	        center: new kakao.maps.LatLng(37.566826, 126.9786567), // 지도의 중심좌표
@@ -243,6 +293,7 @@
 		    resultDiv.innerHTML = message;
 		    
 		}); */
+		
 		// 주소-좌표 변환 객체를 생성합니다
 		var geocoder = new kakao.maps.services.Geocoder();
 
@@ -313,6 +364,8 @@
 			$(".modal-body .road_address").html(selectedRoad);
 			$(".modal-body .address").html(selectedAddress);
 		})
+		
+        var positions = [];
 		$(".food").on("click",function(){
         	$.ajax({
         		url:"/map/food",
@@ -323,22 +376,41 @@
         		dataType:"JSON"
         	}).done(function(resp){
         		console.log(resp);
-        		var positions = [];
         		for(var i = 0;i < resp.documents.length;i++){
-            		console.log(resp.documents[i].place_name);
-            		console.log(resp.documents[i].x + " : " + resp.documents[i].y);
-            		console.log(resp.documents[i].place_url);
+            		//console.log(resp.documents[i].place_name);
+            		//console.log(resp.documents[i].x + " : " + resp.documents[i].y);
+            		//console.log(resp.documents[i].place_url);
             		// 마커를 표시할 위치와 내용을 가지고 있는 객체 배열입니다 
             		positions.push({
-            		        content: '<div style="padding:5px;"><div id="place_name">'+resp.documents[i].place_name+'</div><button type="button" class="detail" data-toggle="modal" data-target="#detailInfo">상세정보</button></div>', 
+            		        content: '<form action="/map/insert" method="get" id="inputForm"><div style="padding:5px;">'
+            		        			+'<div><input type=text readonly name="name" value="'+resp.documents[i].place_name+'"></div>'
+            		        			+'<div><input type=text readonly name="address" value="'+resp.documents[i].address_name+'"></div>'
+            		        			+'<div><input type=text readonly name="road_address" value="'+resp.documents[i].road_address_name+'"></div>'
+            		        			+'<div><input type=text readonly name="category" value="'+resp.documents[i].category_group_name+'"></div>'
+            		        			+'<div><input type=text readonly name="lat" value="'+resp.documents[i].y+'"></div>'
+            		        			+'<div><input type=text readonly name="lng" value="'+resp.documents[i].x+'"></div>'
+            		        			+'<div><input type=text readonly name="phone" value="'+resp.documents[i].phone+'"></div>'
+            		        			+'<div><input type=text readonly name="place_url" value="'+resp.documents[i].place_url+'"></div>'
+            		        			+'<div><input type=text readonly name="detail_category" value="'+resp.documents[i].category_name+'"></div>'
+            		        			+'<div><input type=text readonly name="place_id" value="'+resp.documents[i].id+'"></div>'
+            		        			+'<button type="submit" id="detail">맛집 등록</button></div></form>', 
             		        latlng: new kakao.maps.LatLng(resp.documents[i].y, resp.documents[i].x)
             		});
         		}
+        		
+        	    var imageSrc = 'https://i.imgur.com/rzDIRIP.png', // 마커이미지의 주소입니다    
+        	    imageSize = new kakao.maps.Size(40, 60), // 마커이미지의 크기입니다
+        	    imageOption = {offset: new kakao.maps.Point(20, 69)}; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
+        	    
+        		// 마커의 이미지정보를 가지고 있는 마커이미지를 생성합니다
+        		var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+        		
         		for (var i = 0; i < positions.length; i ++) {
         		    // 마커를 생성합니다
         		    var marker = new kakao.maps.Marker({
         		        map: map, // 마커를 표시할 지도
-        		        position: positions[i].latlng // 마커의 위치
+        		        position: positions[i].latlng, // 마커의 위치
+        		        image: markerImage // 마커이미지 설정 
         		    });
         		    
         		    var iwRemoveable = true;
@@ -351,21 +423,8 @@
         		    // 마커에 mouseover 이벤트와 mouseout 이벤트를 등록합니다
         		    // 이벤트 리스너로는 클로저를 만들어 등록합니다
         		 	// 마커에 클릭이벤트를 등록합니다
+        		 	
         		    kakao.maps.event.addListener(marker, 'click', makeOverListener(map, marker, infowindow));
-        		}
-        		// 인포윈도우를 표시하는 클로저를 만드는 함수입니다 
-        		function makeOverListener(map, marker, infowindow) {
-        		    return function() {
-        		        infowindow.open(map, marker);
-        		    };
-        		    // place_name 불러와서 https://ojava.tistory.com/124
-        		}
-
-        		// 인포윈도우를 닫는 클로저를 만드는 함수입니다 
-        		function makeOutListener(infowindow) {
-        		    return function() {
-        		        infowindow.close();
-        		    };
         		}
         	}).fail(function(error1,error2){
         		console.log(error1);
@@ -388,14 +447,33 @@
             		console.log(resp.documents[i].x + " : " + resp.documents[i].y);
             		console.log(resp.documents[i].place_url);
             		positions.push({
-            		        content: '<div style="padding:5px;">'+resp.documents[i].place_name+'</div>', 
-            		        latlng: new kakao.maps.LatLng(resp.documents[i].y, resp.documents[i].x)
-            		});
+        		        content: '<form action="/map/insert" method="get" id="inputForm"><div style="padding:5px;">'
+        		        			+'<div><input type=text readonly name="name" value="'+resp.documents[i].place_name+'"></div>'
+        		        			+'<div><input type=text readonly name="address" value="'+resp.documents[i].address_name+'"></div>'
+        		        			+'<div><input type=text readonly name="road_address" value="'+resp.documents[i].road_address_name+'"></div>'
+        		        			+'<div><input type=text readonly name="category" value="'+resp.documents[i].category_group_name+'"></div>'
+        		        			+'<div><input type=text readonly name="lat" value="'+resp.documents[i].y+'"></div>'
+        		        			+'<div><input type=text readonly name="lng" value="'+resp.documents[i].x+'"></div>'
+        		        			+'<div><input type=text readonly name="phone" value="'+resp.documents[i].phone+'"></div>'
+        		        			+'<div><input type=text readonly name="place_url" value="'+resp.documents[i].place_url+'"></div>'
+        		        			+'<div><input type=text readonly name="detail_category" value="'+resp.documents[i].category_name+'"></div>'
+        		        			+'<div><input type=text readonly name="place_id" value="'+resp.documents[i].id+'"></div>'
+        		        			+'<button type="submit" id="detail">맛집 등록</button></div></form>', 
+        		        latlng: new kakao.maps.LatLng(resp.documents[i].y, resp.documents[i].x)
+        			});
         		}
+        		
+        	    var imageSrc = 'https://i.imgur.com/kKE28hx.png', // 마커이미지의 주소입니다    
+        	    imageSize = new kakao.maps.Size(40, 60), // 마커이미지의 크기입니다
+        	    imageOption = {offset: new kakao.maps.Point(20, 69)}; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
+        	    
+        		// 마커의 이미지정보를 가지고 있는 마커이미지를 생성합니다
+        		var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
         		for (var i = 0; i < positions.length; i ++) {
         		    var marker = new kakao.maps.Marker({
         		        map: map, 
-        		        position: positions[i].latlng 
+        		        position: positions[i].latlng,
+        		        image: markerImage
         		    });
         		    
         		    var iwRemoveable = true;
@@ -420,6 +498,38 @@
         		console.log(error2);
         	})
 		})
+		$(".foodInsert").on("click",function(){
+        	$.ajax({
+        		url:"/map/foodInsert",
+        		type:"get",
+        		data:{
+        			lat:$("#centerLat").text(),
+        			lng:$("#centerLng").text()},
+        		dataType:"JSON"
+        	}).done(function(resp){
+        		console.log(resp);
+        		alert("입력 완료");
+        	}).fail(function(error1,error2){
+        		console.log(error1);
+        		console.log(error2);
+        	})
+		})
+		$(".cafeInsert").on("click",function(){
+        	$.ajax({
+        		url:"/map/cafeInsert",
+        		type:"get",
+        		data:{
+        			lat:$("#centerLat").text(),
+        			lng:$("#centerLng").text()},
+        		dataType:"JSON"
+        	}).done(function(resp){
+        		console.log(resp);
+        		alert("입력 완료");
+        	}).fail(function(error1,error2){
+        		console.log(error1);
+        		console.log(error2);
+        	})
+		})
 		
 	})
 </script>
@@ -435,10 +545,12 @@
 		<div id="header"><jsp:include page="/WEB-INF/views/include/header.jsp" /></div>
 		<div id="sideBar">
 			<div class="search_area">
-				<div class="searchbar mx-auto">
-		          <input type="text" class="search_input" name="keyword" placeholder="맛집 키워드 검색">
-		          <button type="button" class="search_icon"><i class="fas fa-search"></i></button>
-		        </div>
+				<form action="search" method="get">
+					<div class="searchbar mx-auto">
+			          <input type="text" class="search_input" name="keyword" placeholder="맛집 키워드 검색">
+			          <button type="submit" class="search_icon"><i class="fas fa-search"></i></button>
+			        </div>
+				</form>
 			</div>
 	        <div class="choose_info">
 	        	<div class="store_info mx-auto">
@@ -446,7 +558,7 @@
 	        	가게명<br>
 	        	가게주소<br>
 	        	etc
-	        </div>
+	        	</div>
 	        <div class="partylist">
 	        	<b>진행중인 모임</b>
 	        	<div class="party">
@@ -543,63 +655,11 @@
 			</div>
 		</div>
 		<div id="map"></div>
+		<div class="foodInsert text-center">FD6</div>
+		<div class="cafeInsert text-center">CE7</div>
 		<div class="food text-center"><i class="fas fa-hamburger"></i></div>
 		<div class="cafe text-center"><i class="fas fa-coffee"></i></div>
 		<div class="map_add text-center" data-toggle="modal" data-target="#exampleModal"><i class="fas fa-plus"></i></div>
-		
-		<!-- 마커의 상세 정보 버튼 클릭했을 때 Modal 창-->
-		<div class="modal fade" id="detailInfo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		  <div class="modal-dialog modal-dialog-centered" role="document">
-		    <div class="modal-content">
-		      <div class="modal-header">
-		        <h5 class="modal-title" id="exampleModalLabel">일반 맛집 추가하기</h5>
-		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-		          <span aria-hidden="true">&times;</span>
-		        </button>
-		      </div>
-		      <div class="modal-body">
-		        	<table class="table">
-						  <thead>
-						    <tr>
-						      <th scope="col">#</th>
-						      <th scope="col">선택한 맛집 정보</th>
-						    </tr>
-						  </thead>
-						  <tbody>
-						    <tr>
-						      <th scope="row">가게명</th>
-						      <td class="marker_name"></td>
-						    </tr>
-						    <tr>
-						      <th scope="row">카테고리</th>
-						      <td class="marker_category"></td>
-						    </tr>
-						    <tr>
-						      <th scope="row">도로명 주소</th>
-						      <td class="marker_road"></td>
-						    </tr>
-						    <tr>
-						      <th scope="row">지번 주소</th>
-						      <td class="marker_address"></td>
-						    </tr>
-						    <tr>
-						      <th scope="row">위도</th>
-						      <td class="marker_lat"></td>
-						    </tr>
-						    <tr>
-						      <th scope="row">경도</th>
-						      <td class="marker_lng"></td>
-						    </tr>
-						  </tbody>
-					</table>
-		      </div>
-		      <div class="modal-footer">
-		        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-		        <button type="button" class="btn btn-primary">등록</button>
-		      </div>
-		    </div>
-		  </div>
-		</div>
 		
 		<!-- Modal -->
 		<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

@@ -4,33 +4,29 @@ public class MapDTO {
 	private int seq;
 	private String name;
 	private String address;
+	private String road_address;
 	private String category;
 	private double lat;
 	private double lng;
 	private double rating_avg;
-	private String week_operation;
-	private String time_operation;
-	private String closed;
 	private String phone;
-	private String homepage;
-	public MapDTO() {
-		super();
-	}
-	public MapDTO(int seq, String name, String address, String category, double lat, double lng, double rating_avg,
-			String week_operation, String time_operation, String closed, String phone, String homepage) {
-		super();
+	private String place_url;
+	private int place_id;
+	public MapDTO(int seq, String name, String address, String road_address, String category, double lat, double lng,
+			double rating_avg, String phone, String place_url, int place_id) {
 		this.seq = seq;
 		this.name = name;
 		this.address = address;
+		this.road_address = road_address;
 		this.category = category;
 		this.lat = lat;
 		this.lng = lng;
 		this.rating_avg = rating_avg;
-		this.week_operation = week_operation;
-		this.time_operation = time_operation;
-		this.closed = closed;
 		this.phone = phone;
-		this.homepage = homepage;
+		this.place_url = place_url;
+		this.place_id = place_id;
+	}
+	public MapDTO() {
 	}
 	public int getSeq() {
 		return seq;
@@ -49,6 +45,12 @@ public class MapDTO {
 	}
 	public void setAddress(String address) {
 		this.address = address;
+	}
+	public String getRoad_address() {
+		return road_address;
+	}
+	public void setRoad_address(String road_address) {
+		this.road_address = road_address;
 	}
 	public String getCategory() {
 		return category;
@@ -74,34 +76,23 @@ public class MapDTO {
 	public void setRating_avg(double rating_avg) {
 		this.rating_avg = rating_avg;
 	}
-	public String getWeek_operation() {
-		return week_operation;
-	}
-	public void setWeek_operation(String week_operation) {
-		this.week_operation = week_operation;
-	}
-	public String getTime_operation() {
-		return time_operation;
-	}
-	public void setTime_operation(String time_operation) {
-		this.time_operation = time_operation;
-	}
-	public String getClosed() {
-		return closed;
-	}
-	public void setClosed(String closed) {
-		this.closed = closed;
-	}
 	public String getPhone() {
 		return phone;
 	}
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
-	public String getHomepage() {
-		return homepage;
+	public String getPlace_url() {
+		return place_url;
 	}
-	public void setHomepage(String homepage) {
-		this.homepage = homepage;
+	public void setPlace_url(String place_url) {
+		this.place_url = place_url;
 	}
+	public int getPlace_id() {
+		return place_id;
+	}
+	public void setPlace_id(int place_id) {
+		this.place_id = place_id;
+	}
+	
 }

@@ -13,3 +13,7 @@
 .login_text{
     font-family: 'Noto Sans KR', sans-serif;
 } 
+#findId, #findPw:hover{
+    color: blue;
+    cursor: pointer;
+}

@@ -17,9 +17,13 @@ public class HomeController {
 
 	@RequestMapping("/")
 	public String home() {
-
 		
 		return "home";
+	}
+	
+	@RequestMapping("error")
+	public String error() {
+		return "error";
 	}
 	
 }

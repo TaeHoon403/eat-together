@@ -1,0 +1,41 @@
+@charset "UTF-8";
+
+.sidebar{
+    text-align: center;
+    position: fixed;
+    background-color:#ffd04f; 
+    width: 20%;
+    height: 100%;
+}
+.logo img{
+
+    width: 50%;
+}
+.menubtn{
+    height:10%;
+    font-size: 2vw;
+
+}
+.menubtn>div{
+    height:100%;
+    line-height: 2.6;
+    padding: 0px;
+}
+.logo{
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+.menubtn a{ 
+    text-decoration:none;
+    color: black;
+    border: 0px solid white;
+    display:block;
+    height: inherit;
+}
+.menubtn a:hover{ 
+    text-decoration:none;
+    color:white;
+    /*                background-color: #fcbb42;*/
+    transition-duration: 0.1s;
+    /*	            transform: translate(9%,-5%);*/
+}

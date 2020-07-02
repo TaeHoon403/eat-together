@@ -1,0 +1,13 @@
+@charset "UTF-8";
+
+  *{
+      box-sizing: border-box;
+}
+
+#editPwBtn{
+    margin: auto;
+}
+.editpw_text{
+        font-family: 'Noto Sans KR', sans-serif;
+
+}

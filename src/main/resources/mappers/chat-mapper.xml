@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Chats">
+	<select id="selectAll" resultType="coma.spring.dto.ChatDTO">
+		select * from chat_messages order by write_date
+	</select>
+	<insert id="insertChat" parameterType="java.util.List">
+		<foreach collection="list" item="item" index="index"
+			open="INSERT ALL " separator=" " close="SELECT * FROM DUAL">
+			into chat_messages
+			values
+			(#{item.chatSeq_parent}, #{item.seq},
+			#{item.content}, #{item.writer},SYSDATE,
+			#{item.view_count})
+		</foreach>
+	</insert>
+</mapper>

@@ -1,0 +1,40 @@
+@charset "UTF-8";
+
+* {
+	box-sizing: border-box;
+}
+
+#menubar {
+	float: left;
+	width: 20%;
+	height: 100%;
+	text-align: center;
+	padding-top: 50px;
+	background-color: #274555;
+}
+
+.menu {
+	border-radius: 20px;
+	width: 80%;
+	height: 100px;
+	margin: auto;
+	text-align: center;
+	line-height: 100px;
+	margin-bottom: 50px;
+	font-family: 'Noto Sans KR', sans-serif;
+}
+
+.menu:hover {
+	background-color: #fdc23e;
+    cursor: pointer;
+	color: white;
+}
+
+.menubar-list, .menubar-list:hover {
+	text-decoration: none;
+    color: white;
+}
+
+#footer-container {
+	clear: both;
+}

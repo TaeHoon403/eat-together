@@ -1,0 +1,16 @@
+@charset "UTF-8";
+
+* {
+	box-sizing: border-box;
+}
+
+.edit_text {
+	font-family: 'Noto Sans KR', sans-serif;
+}
+
+#contents {
+	display: inline-block;
+	float: left;
+	width: 80%;
+	height: 100%;
+}

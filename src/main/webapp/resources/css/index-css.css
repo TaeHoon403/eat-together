@@ -1,63 +1,87 @@
 @charset "UTF-8";
 
-  *{
-                box-sizing: border-box;
-            }
-            .header-wrap > div{
-                position: relative;
-            }
-            .navibar{
-                /*font-size: 14pt;*/
-                font-family: 'Noto Sans KR', sans-serif;
-            }
+* {
+	box-sizing: border-box;
+}
 
-            .slide-area{
-                /*height:700px;*/
-            }
-            .slide-area img{
-                /*height:600px;*/
-            }
+.header-wrap>div {
+	position: relative;
+}
 
-            .footer{
-                height:200px;
-                background-color: #274555;
-                color:#fdc23e;
-                font-size: 9pt;
-                font-family: 'Noto Sans KR', sans-serif;
-                text-align: center;
-                position: absolute;
+.navibar {
+	/*font-size: 14pt;*/
+	font-family: 'Noto Sans KR', sans-serif;
+}
 
-            }
+.slide-area {
+	/*height:700px;*/
+	
+}
 
-            .main-login{
-                font-size:9pt;
-                font-family: 'Noto Sans KR', sans-serif;
-            }
+.slide-area img {
+	/*height:600px;*/
+	
+}
 
-            .header-wrap{
+.navi-menu>a {
+	color: #212529;
+}
 
-            }
-            .carousel-caption{
-                top:60%;
-            }
+.navi-menu>a:hover {
+	text-decoration: none;
+	color: #212529;
+}
 
-            .carousel-indicators{
-                top:80%;
-            }
+.navi-menu>a:visited {
+	color: #212529;
+}
 
-            .carousel-caption > h1 {
-                font-family: 'Black Han Sans', sans-serif;
-                background-color: rgba( 0, 0, 0, 0.5 );
+.footer {
+	height: 200px;
+	background-color: #274555;
+	color: #fdc23e;
+	font-size: 9pt;
+	font-family: 'Noto Sans KR', sans-serif;
+	text-align: center;
+	position: absolute;
+}
 
-            }
-            .index-copyright{
-                color:#ff7761;
-            }
-            
-            .logo-image > img{
-                width:100%;
-            }
+.main-login {
+	font-size: 9pt;
+	font-family: 'Noto Sans KR', sans-serif;
+}
 
-            $('.carousel').carousel({
-                interval: 2000
-            })
+.header-wrap {
+	
+}
+
+.carousel-caption {
+	top: 60%;
+}
+
+.carousel-indicators {
+	top: 80%;
+}
+
+.carousel-caption>h1 {
+	font-family: 'Black Han Sans', sans-serif;
+	background-color: rgba(0, 0, 0, 0.5);
+}
+
+.index-copyright {
+	color: #ff7761;
+}
+
+.logo-image>a>img {
+	width: 100%;
+}
+
+$('
+.carousel ').carousel ({
+	interval: 2000
+}
+
+)
+#goToMyPage, .navi-menu {
+    cursor: pointer;
+}

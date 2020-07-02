@@ -45,7 +45,7 @@
 	<!-- hedaer  -->
 	<!-- ******************* -->
 
-	<form action="/" method="post">
+	<form action="/member/signupProc" method="post">
 		<div class="article container">
 			<div class="signup_text">
 				<label for="id" class="signup_text">아이디</label> <input type="text"
@@ -74,7 +74,7 @@
 				<label for="account_email" class="signup_text">이메일</label> <input
 					type="text" class="form-control" id="account_email"
 					name="account_email" placeholder="ex)asdf1234@naver.com"> <input
-					type=button id=mail value="인증번호 받기"><br>
+					type=button id=mail value="인증하기"><br>
 				<div id=mail_div style="display: none;">
 					인증번호 : <input type=text id=mail_text>
 					<button type=button id=mail_accept>인증</button>
@@ -95,27 +95,37 @@
 	</form>
 
 	<script>
-	// form submit 전 체크하는 사항
-	$("#btn").on("click",function() {
-		if ($("#id_text").html() == "사용가능한 id입니다.") {
-			if ($("#pw_text").html() == "비밀번호가 일치합니다."){
-					if($("#nickname").val() != ""){
+		// form submit 전 체크하는 사항
+		$("#btn").on("click", function() {
+			if ($("#id_text").html() == "사용가능한 id입니다.") {
+				if ($("#pw_text").html() == "비밀번호가 일치합니다.") {
+					if ($("#nickname").val() != "") {
 						if ($("#mail_text").val() != "") {
 							if ($("#birth").val() != "") {
-
+								alert("맛집갔다갈래 회원이 되신 것을 환영합니다!");
 								return true;
-								
-							}else {alert("생년월일을 입력해주세요.");}
-						} else {alert("이메일 인증을 해주세요.");}
-					} else {alert("닉네임을 입력해주세요");}
-				}else { alert("비밀번호를 확인해주세요.");}
-			} else {alert("아이디 중복체크를 진행해주세요.");}
-		
+
+							} else {
+								alert("생년월일을 입력해주세요.");
+							}
+						} else {
+							alert("이메일 인증을 해주세요.");
+						}
+					} else {
+						alert("닉네임을 입력해주세요");
+					}
+				} else {
+					alert("비밀번호를 확인해주세요.");
+				}
+			} else {
+				alert("아이디 중복체크를 진행해주세요.");
+			}
+
 			return false;
 		})
-		
+
 		//다시작성 버튼
-		$("#reset").on("click", function(){
+		$("#reset").on("click", function() {
 			$("#id").val("");
 			$("#id_text").html("");
 			$("#pw").val("");
@@ -124,7 +134,7 @@
 			$("#account_email").val("");
 			$("#birth").val("");
 		})
-	
+
 		//id regex
 		$("#id").focusout(function() {
 			var id = $("#id").val();
@@ -145,16 +155,18 @@
 		})
 
 		//pw regex
-		$("#pw").focusout(function() {
-			var pw = $("#pw").val();
-			var pwregex = /(?=.*\d{1,50})(?=.*[~`!@#$%\^&*()-+=]{1,50})(?=.*[a-zA-Z]{1,50}).{6,12}$/;
-			if ($("#pw").val() != "") {
-				if (!pwregex.test(pw)) {
-					alert("비밀번호 조건을 확인하세요.");
-					$("#pw").val("");
-				}
-			}
-		})
+		$("#pw")
+				.focusout(
+						function() {
+							var pw = $("#pw").val();
+							var pwregex = /(?=.*\d{1,50})(?=.*[~`!@#$%\^&*()-+=]{1,50})(?=.*[a-zA-Z]{1,50}).{6,12}$/;
+							if ($("#pw").val() != "") {
+								if (!pwregex.test(pw)) {
+									alert("비밀번호 조건을 확인하세요.");
+									$("#pw").val("");
+								}
+							}
+						})
 
 		//pw 재확인
 		$("#pwCorrection").focusin(function() {
@@ -198,7 +210,7 @@
 							if ($("#account_email").val() != "") {
 								var account_email = $("#account_email").val();
 								var account_emailregex = /[a-zA-Z0-9]*@[a-zA-Z0-9]*[.]{1}[a-zA-Z]{2,3}|([.]{1}[a-zA-Z]{2,3})$/;
-								if (!emailregex.test(account_email)) {
+								if (!account_emailregex.test(account_email)) {
 									$("#account_email").val("");
 									alert("유효한 이메일을 입력해주세요.");
 									$("#account_email").focus();
@@ -227,71 +239,71 @@
 							}
 						})
 
-		//아이디 중복체크 수정 필요
-		$("#duplcheck").on("click", function() {
+		//아이디 중복체크
+		$("#dublCheck").on("click", function() {
 			if ($("#id").val() != "") {
 				$.ajax({
-					url : "../duplcheck.mem", //바꿔야 한다.
-					dataType : "json",
+					url : "/member/isIdAvailable",
 					type : "post",
 					data : {
 						id : $("#id").val()
 					}
 				}).done(function(resp) {
 					$("#id_text").css("display", "block");
-					$("#id_text").css("color", "blue");
-					$("#id_text").html("사용가능한 id입니다.");
-				}).fail(function(error) {
-					console.log(error);
-					$("#id_text").css("display", "block");
-					$("#id_text").css("color", "red");
-					$("#id_text").html("사용 불가능한 아이디입니다.");
-					$("#id").val("");
+					if (resp == "true") {
+						$("#id_text").css("color", "blue");
+						$("#id_text").html("사용가능한 id입니다.");
+					} else if (resp == "false") {
+						$("#id_text").css("color", "red");
+						$("#id_text").html("사용 불가능한 id입니다.");
+						$("#id").val("");
+					}
+				}).fail(function(error1, error2) {
+					console.log(error1);
+					console.log(error2);
 				})
 			} else {
 				alert("아이디를 입력해주세요.");
 			}
+
 		})
 
-		//메일 인증 수정 필요
+		//메일 인증 
 		$("#mail").on("click", function() {
 			if ($("#account_email").val() == "") {
 				alert("이메일을 입력해주십시오.");
 				$("#account_email").focus();
 			} else {
 				$.ajax({
-					url : "../mail.mem", //바꿔야 한다
-					dataType : "json",
+					url : "/mail/mailSending",
+					type : "post",
 					data : {
-						email : $("#account_email").val()
+						account_email : $("#account_email").val()
 					}
 				}).done(function(resp) {
-					if (resp.check) {
-						alert("인증번호가 발송되었습니다.");
+					if (resp != "") {
+						alert("인증메일이 발송되었습니다.");
 						$("#mail_div").css("display", "block");
 						$("#mail_accept").on("click", function() {
-							if ($("#mail_text").val() == resp.number) {
+							if ($("#mail_text").val() == resp) {
 								$("#mail_text").attr("readonly", true);
 								$("#mail_text").css("color", "blue");
 								$("#mail_text").val("인증에 성공하였습니다.");
 							} else {
-								alert("인증번호를 확인해주세요.");
+								alert("인증문자열을 확인해주세요.");
 								$("#mail_text").val("");
 								$("#mail_text").focus();
 							}
 						})
-
 					} else {
-						alert("이미 가입된 계정입니다.");
-						$("#account_email").val("");
-						$("#account_email").focus();
+						alert("이미 사용중인 이메일입니다.");
+						$("#mail_text").val("");
+						$("#mail_text").focus();
 					}
+
 				})
 			}
-
 		})
-
-
 	</script>
 
 	<!-- ******************* -->
