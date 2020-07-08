@@ -1,0 +1,26 @@
+@charset "UTF-8";
+
+ .notice-title{
+        font-family: 'Noto Sans KR', sans-serif;
+        font-weight: 500;
+    }
+    
+  .notice-content-title{
+  	 font-family: 'Noto Sans KR', sans-serif;
+  	 font-weight:300;
+  	 
+  }
+  
+  *{
+  	 font-family: 'Noto Sans KR', sans-serif;
+  }
+  
+  .imp{
+  	background-color:#dddfe6;
+  	color:#fffff;
+  }
+  
+  th{
+	text-align: center;
+	
+}

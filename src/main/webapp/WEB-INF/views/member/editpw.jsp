@@ -52,6 +52,7 @@
 	</form>
 	<script>
 		$("#editPwBtn").on("click", function() {
+			alert("비밀번호가 수정되었습니다.");
 			document.getElementById('editPwForm').submit();
 			window.open("about:blank", "_self").close();
 		})

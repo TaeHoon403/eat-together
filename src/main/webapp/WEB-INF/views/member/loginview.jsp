@@ -44,7 +44,7 @@
 	<jsp:include page="/WEB-INF/views/include/header.jsp" />
 	<!-- hedaer  -->
 	<!-- ******************* -->
-	<div id=container class=login-container>
+	<div id=container class="col-md-12 login-container">
 		<h1 class="login_text">로그인</h1>
 		<form action="/member/login" method=post>
 			<div class="login_text">
@@ -55,32 +55,76 @@
 				<label for="password" class="login_text">Password</label> <input
 					type="password" class="form-control" id="pw" name="pw">
 			</div>
-			<button type="submit" id="loginBtn" class="btn btn-warning">Submit</button>
+			<div class="col-md-12 text-center login_text" id="BtnBox">
+				<button type="submit" id="loginBtn" class="btn btn-warning">로그인</button>
+				<!-- 카카오톡 아이디로 로그인 버튼 노출 영역 -->
+				<a
+					href="https://kauth.kakao.com/oauth/authorize?client_id=39543f4353dc8ce2c9268fc23c6d67e4&redirect_uri=http://localhost/member/kakaoLogin&response_type=code"
+					id="kakaoLoginBtn"> <img
+					src="/resources/img/kakao_login_medium_narrow.png">
+				</a>
+			</div>
+			<!-- 카카오톡 아이디로 로그인 버튼 노출 영역 -->
 		</form>
-		<!-- 카카오톡 아이디로 로그인 버튼 노출 영역 -->
-		<a
-			href="https://kauth.kakao.com/oauth/authorize?client_id=39543f4353dc8ce2c9268fc23c6d67e4&redirect_uri=http://localhost/member/login&response_type=code">
-			<img src="/resources/img/kakao_login_medium_narrow.png"
-			id="kakaoLoginBtn">
-		</a>
-		<!-- 카카오톡 아이디로 로그인 버튼 노출 영역 -->
 
-		<div class="login-container">
-			<div id="findId" onclick="window.open('/member/findid','아이디 찾기','width=430,height=500,location=no,status=no,scrollbars=yes');">아이디를 잊으셨나요?</div>
-			<div id="findPw" onclick="window.open('/member/findpw','비밀번호 찾기','width=430,height=500,location=no,status=no,scrollbars=yes');">비밀번호를 잊으셨나요?</div>
+
+		<div id="find-container" class="col-md-12 text-center login_text">
+			<div id="findId"
+				onclick="window.open('/member/findid','아이디 찾기','width=430,height=500,location=no,status=no,scrollbars=yes');">아이디를
+				잊으셨나요?</div>
+			<div id="findPw"
+				onclick="window.open('/member/findpw','비밀번호 찾기','width=430,height=500,location=no,status=no,scrollbars=yes');">비밀번호를
+				잊으셨나요?</div>
 		</div>
 	</div>
 
 	<script>
-	$("#loginBtn").on("click", function(){
-		if($("#id").val()==""){
-			alert("아이디를 입력해주세요.");
-			return false;
-		}else if($("#pw").val()==""){
-			alert("비밀번호를 입력해주세요.");
-			return false;
-		}
-	})
+		$("#loginBtn")
+				.on(
+						"click",
+						function() {
+							if ($("#id").val() == "") {
+								alert("아이디를 입력해주세요.");
+								return false;
+							} else if ($("#pw").val() == "") {
+								alert("비밀번호를 입력해주세요.");
+								return false;
+							} else {
+								//by 지은. 비밀번호 오류 시 유효성 검사하기_20200706
+								$
+										.ajax({
+											url : "/member/isPwCorrect",
+											type : 'POST',
+											data : {
+												id : $("#id").val(),
+												pw : $('#pw').val()
+											},
+											success : function(msg) {
+												if (msg == "uncorrect") {
+													alert("아이디 또는 비밀번호를 잘못 입력하셨습니다.");
+													$("#id").val("");
+													$("#pw").val("");
+													$("#id").focus();
+													location
+															.replace("redirect:/member/loginview")
+												} else if (msg == "correct") {
+													alert("로그인 성공하였습니다.");
+													return true;
+												}
+											},
+											error : function(jqXHR, textStatus,
+													errorThrown) {
+												console.log("arjax error : "
+														+ textStatus + "\n"
+														+ errorThrown);
+												console
+														.warn(jqxhr.responseText);
+												return false;
+
+											}
+										});
+							}
+						})
 	</script>
 
 

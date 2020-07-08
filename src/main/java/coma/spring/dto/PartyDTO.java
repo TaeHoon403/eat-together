@@ -22,7 +22,16 @@ public class PartyDTO {
 	private int place_id;
 	private String sDate;
 	private String sTime;
+	private String imgaddr;
 	
+	
+	
+	public String getImgaddr() {
+		return imgaddr;
+	}
+	public void setImgaddr(String imgaddr) {
+		this.imgaddr = imgaddr;
+	}
 	
 	public int getPlace_id() {
 		return place_id;
@@ -142,7 +151,7 @@ public class PartyDTO {
 	}
 	public PartyDTO(int seq, String parent_name, String parent_address, String title, String writer, String date,
 			String time, Timestamp meetdate, int count, String gender, String age, String drinking, String content,
-			String status, int place_id, String sDate, String sTime) {
+			String status, int place_id, String sDate, String sTime, String imgaddr) {
 		super();
 		this.seq = seq;
 		this.parent_name = parent_name;
@@ -159,6 +168,7 @@ public class PartyDTO {
 		this.content = content;
 		this.status = status;
 		this.place_id = place_id;
+		this.imgaddr = imgaddr;
 		this.sDate =  new SimpleDateFormat("yyyy-MM-dd").format(meetdate);
 		this.sTime =  new SimpleDateFormat("yyyy-MM-dd").format(meetdate);
 	}

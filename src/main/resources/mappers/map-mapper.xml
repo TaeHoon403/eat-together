@@ -10,7 +10,22 @@
 	<select id="selectAll" resultType="coma.spring.dto.MapDTO">
 		select * from map
 	</select>
-	<select id="searchByKeyword" resultType="coma.spring.dto.MapDTO">
+	<select id="searchByPlace_id" resultType="coma.spring.dto.MapDTO">
 		select * from map where place_id = #{place_id}
+	</select>
+	<select id="selectPartyOn" resultType="int">
+		select count(*) from party where place_id in (select place_id from map where place_id = #{place_id}) and status = 1
+	</select>
+	<select id="selectOne" resultType="coma.spring.dto.MapDTO">
+		select * from map where place_id = #{place_id}
+	</select>
+	<select id="searchByKeyword" resultType="coma.spring.dto.MapDTO">
+		select * from map where name like '%'||#{keyword}||'%'
+	</select>
+	<select id="searchByCategory" resultType="coma.spring.dto.MapDTO">
+		select * from map where category = #{category}
+	</select>
+	<select id="topStore" resultType="coma.spring.dto.MapDTO">
+      select * from map where place_id in (#{top1},#{top2},#{top3},#{top4},#{top5})
 	</select>
 </mapper>

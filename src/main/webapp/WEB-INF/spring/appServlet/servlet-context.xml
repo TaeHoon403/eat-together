@@ -16,12 +16,17 @@
 
 	<!-- Handles HTTP GET requests for /resources/** by efficiently serving 
 		up static resources in the ${webappRoot}/resources directory -->
+	<resources mapping="/upload/**" location="/upload/" />
 	<resources mapping="/resources/**" location="/resources/" />
-    <resources mapping="/img/**" location="/img/" />
-    <resources mapping="/css/**" location="/css/" />
-    <resources mapping="/json/**" location="/json/" />
-    <resources mapping="/js/**" location="/js/" />
-    <resources mapping="/media/**" location="/media/" />
+	<resources mapping="/img/**" location="/img/" />
+	<resources mapping="/css/**" location="/css/" />
+	<resources mapping="/json/**" location="/json/" />
+	<resources mapping="/js/**" location="/js/" />
+	<resources mapping="/media/**" location="/media/" />
+	<resources mapping="/summernoteImage/**"
+		location="/summernote_image/"></resources>
+	<resources mapping="/upload/files/**"
+		location="/upload/files/" />
 
 	<!-- Resolves views selected for rendering by @Controllers to .jsp resources 
 		in the /WEB-INF/views directory -->
@@ -36,7 +41,8 @@
 		class="org.springframework.mail.javamail.JavaMailSenderImpl">
 		<beans:property name="host" value="smtp.daum.net" />
 		<beans:property name="port" value="465" />
-		<beans:property name="username" value="no-reply@eat-together.net" />
+		<beans:property name="username"
+			value="no-reply@eat-together.net" />
 		<beans:property name="password" value="ji1jin0eat3" />
 		<beans:property name="defaultEncoding" value="utf-8" />
 		<beans:property name="javaMailProperties">
@@ -52,6 +58,17 @@
 	<context:component-scan
 		base-package="coma.spring" />
 
+	<beans:bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<beans:property name="maxUploadSize" value="10485760" /> <!-- 10MB까지 받겟다. -->
+		<beans:property name="maxInMemorySize" value="10485760"></beans:property>
+	</beans:bean>
+
+	<!-- 회원 프로필 이미지 파일 업로드를 위한 디렉토리 설정 -->
+	<beans:bean id="uploadPath" class="java.lang.String">
+		<!-- 파일업로드 디렉토리 -->
+		<beans:constructor-arg value="해당디렉토리" />
+	</beans:bean>
 
 
 </beans:beans>

@@ -1,0 +1,9 @@
+@charset "UTF-8";
+.faq-title{
+        font-family: 'Noto Sans KR', sans-serif;
+        font-weight: 500;
+    }
+	.faq { width:100%;font-family: 'Noto Sans KR', sans-serif;}
+    .faq-q {cursor:pointer; padding:10px; font-weight:500;}
+    .faq-q > img {margin-right:10px;}
+    .faq-a { display:none; background:#f6f6f6; padding:10px; font-weight:300;}

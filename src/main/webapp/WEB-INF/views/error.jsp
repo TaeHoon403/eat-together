@@ -34,7 +34,7 @@
 <script>
 	$(function() {
 		alert("문제가 발생하였습니다. 다시 한번 시도해주세요.");
-		location.replace('/');
+		location.replace('redirect:/');
 	});
 </script>
 </head>

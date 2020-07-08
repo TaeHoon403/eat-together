@@ -1,18 +1,15 @@
 @charset "UTF-8";
 
-
-.party_headline{
+.party_headline {
 	font-family: 'Noto Sans KR', sans-serif;
 }
 
 form {
 	font-family: 'Noto Sans KR', sans-serif;
-	weight:200;
+	weight: 200;
 }
 
-.party-titlelabel{
+.party-titlelabel {
 	font-family: 'Noto Sans KR', sans-serif;
-	weight:400;
+	weight: 400;
 }
-
-

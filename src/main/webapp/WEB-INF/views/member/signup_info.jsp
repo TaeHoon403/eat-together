@@ -50,7 +50,7 @@
 			<div class="signup_text">
 				<label for="id" class="signup_text">아이디</label> <input type="text"
 					class="form-control" id="id" name="id" placeholder="영문+숫자 4~10글자">
-				<button type=button id=dublCheck>중복확인</button>
+				<button type=button id=dublCheck class="btn btn-light">중복확인</button>
 				<div id=id_text style="display: none;"></div>
 			</div>
 			<div class="signup_text">
@@ -73,11 +73,11 @@
 			<div class="signup_text">
 				<label for="account_email" class="signup_text">이메일</label> <input
 					type="text" class="form-control" id="account_email"
-					name="account_email" placeholder="ex)asdf1234@naver.com"> <input
-					type=button id=mail value="인증하기"><br>
+					name="account_email" placeholder="ex)eat-together@naver.com">
+				<button type=button id=mail class="btn btn-light">인증하기</button><br>
 				<div id=mail_div style="display: none;">
 					인증번호 : <input type=text id=mail_text>
-					<button type=button id=mail_accept>인증</button>
+					<button type=button id=mail_accept class="btn btn-light">인증</button>
 				</div>
 			</div>
 
@@ -88,8 +88,8 @@
 			</div>
 
 			<div align=center>
-				<input type=submit id=btn value="가입완료"> <input type=reset
-					value="다시 작성" style="margin-left: 5px;">
+				<button type=submit id=btn class="btn btn-warning signup_text">가입하기</button>
+				<button type=reset class="btn btn-light signup_text" style="margin-left: 5px;">다시 작성하기</button>
 			</div>
 		</div>
 	</form>
@@ -223,17 +223,14 @@
 				.focusout(
 						function() {
 							var birth = $("#birth").val();
-							var regex1 = /^(19[0-9][0-9]|20\d{2})(0[0-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])$/;
+							var regex1 = /^(19[0-9][0-9]|200[0-5])(0[0-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])$/;
 							if ($("#birth").val() != "") {
 								if (regex1.test(birth)) {
-									birth = birth
-											.replace(
-													/^(19[0-9][0-9]|20\d{2})(0[0-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])$/,
-													"$1-$2-$3");
+									birth = birth.replace(/^(19[0-9][0-9]|200[0-5])(0[0-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])$/,"$1-$2-$3");
 									$("#birth").val(birth);
 								} else {
 									$("#birth").val("");
-									alert("올바른 생년월일을 입력해주세요.");
+									alert("2005년 이전 출생자만 이용가능합니다.\n올바른 생년월일을 입력해주세요.");
 									$("#birth").focus();
 								}
 							}

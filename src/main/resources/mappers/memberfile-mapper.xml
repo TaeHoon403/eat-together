@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="MemberFile">
+	<insert id="uploadProfile">
+		insert into memberfile
+		values(memberfile_seq.nextval,#{sysname},#{oriname},#{parent_id})
+	</insert>
+
+	<select id="getFileById"
+		resultType="coma.spring.dto.MemberFileDTO">
+		select * from memberfile where parent_id = #{value}
+	</select>
+	
+	<delete id="deleteFilebyId">
+		delete from memberfile where parent_id=#{value}
+	</delete>
+
+</mapper>

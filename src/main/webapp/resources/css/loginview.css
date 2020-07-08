@@ -10,10 +10,45 @@
     width: 30%;
     height: 70%;
 }
+
 .login_text{
     font-family: 'Noto Sans KR', sans-serif;
 } 
-#findId, #findPw:hover{
+
+#findId:hover, #findPw:hover{
     color: blue;
     cursor: pointer;
+}
+
+#find-container>div{
+    text-align: center;
+    width: 50%;
+    margin: auto;
+}
+
+#find-container{
+    margin-bottom: 40px;
+}
+
+#loginBtn{
+    text-align: center;
+    margin: auto;
+    font-family: 'Noto Sans KR', sans-serif;
+    margin-top: 10px;
+    float: left;
+} 
+
+#kakaoLoginBtn{
+    width: 100px;
+    height: 30px;
+}
+
+ #kakaoLoginBtn> img{
+     margin-top: 10px;
+     margin-bottom: 10px;
+}
+
+#BtnBox{
+    margin: auto;
+    text-align: center;
 }

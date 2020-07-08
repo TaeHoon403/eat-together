@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="NoticeFile">
+
+
+<insert id="insert"> 
+	insert into notice_file values(#{parent_seq},NOTFILE_SEQ.nextval,#{sysname},#{oriname})
+	<!-- 문자열은 # -->
+</insert>
+
+<select id="getFileBySeq" resultType="coma.spring.dto.NoticeFileDTO">
+	select * from notice_file where SEQ=#{value}
+</select>
+
+<select id="getFileList" resultType="coma.spring.dto.NoticeFileDTO">
+	select * from notice_file where parent_seq = #{value}
+</select>
+
+</mapper>

@@ -53,7 +53,7 @@
 	<div id=mypage-container>
 		<jsp:include page="/WEB-INF/views/include/menubar.jsp" />
 		<div id=contents>
-			<table class="table">
+			<table class="table" id="mypage_table">
 				<thead class="thead-dark">
 					<tr>
 						<th scope="col" colspan=12>My Information</th>
@@ -61,20 +61,27 @@
 				</thead>
 				<tbody>
 					<tr>
+						<th scope="row">PROFILE IMAGE</th>
+						<td class="myinfo_text" id=profile_box><img
+                        src="${pageContext.request.contextPath}/upload/${loginInfo.id}/${mfdto.sysname}"
+                        alt="" onError="this.src='/resources/img/no_img.png'"></td>
+
+					</tr>
+					<tr>
 						<th scope="row">ID</th>
-						<td class="myinfo_text">${loginInfo.id}</td>
+						<td class="myinfo_text">${mdto.id}</td>
 					</tr>
 					<tr>
 						<th scope="row">NICKNAME</th>
-						<td class="myinfo_text">${loginInfo.nickname}</td>
+						<td class="myinfo_text">${mdto.nickname}</td>
 					</tr>
 					<tr>
 						<th scope="row">BIRTH</th>
-						<td class="myinfo_text">${loginInfo.birth}</td>
+						<td class="myinfo_text">${mdto.birth}</td>
 					</tr>
 					<tr>
 						<th scope="row">EMAIL</th>
-						<td class="myinfo_text">${loginInfo.account_email}</td>
+						<td class="myinfo_text">${mdto.account_email}</td>
 					</tr>
 					<tr>
 						<th scope="row"></th>
@@ -92,9 +99,9 @@
 		$("#withdraw").on("click", function() {
 			var result = confirm("정말로 회원탈퇴를 진행하시겠습니까?");
 			console.log(result);
-			if(result){
+			if (result) {
 				location.replace('/member/withdrawView');
-			}else{
+			} else {
 				location.replace('/member/mypage_myinfo')
 			}
 

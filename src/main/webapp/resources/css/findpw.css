@@ -1,0 +1,9 @@
+@charset "UTF-8";
+
+* {
+	box-sizing: border-box;
+}
+
+.findpw_text {
+	font-family: 'Noto Sans KR', sans-serif;
+}

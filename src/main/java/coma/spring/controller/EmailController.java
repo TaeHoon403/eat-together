@@ -39,7 +39,7 @@ public class EmailController {
 
 	@Autowired
 	private MemberService mservice;
-	
+
 	@Autowired
 	private HttpSession session;
 
@@ -112,7 +112,7 @@ public class EmailController {
 			return resp;
 		}
 	}
-	
+
 	//아이디 찾기 인증 메일 보내기
 	@RequestMapping("mailSendingForId")
 	@ResponseBody
@@ -124,18 +124,18 @@ public class EmailController {
 		String input_account_email = account_email;
 		System.out.println("아이디 찾기용 입력한 이메일 : " + account_email);
 		MemberDTO mdto = mservice.emailCheck(input_account_email);
-		
-		
+
+
 		if(mdto==null) {
 			System.out.println("이메일 불일치");
 			resplist = null;
 			return resplist;
-			
+
 		}else {
 			System.out.println("이메일 일치");
 			String dice = this.getRandomString();
 			System.out.println("랜덤문자열 : " + dice);
-			
+
 			String id = mdto.getId();
 			resplist.add(0, dice);
 			resplist.add(1, id);
@@ -178,62 +178,74 @@ public class EmailController {
 		}
 	}
 
-	
-//	//비밀번호 찾기 인증 메일 보내기
-//	@RequestMapping("mailSendingForPw")
-//	@ResponseBody
-//	public String mailSenderForPw(@RequestParam String account_email, String id) throws Exception{
-//		String username = "eat-together";
-//		String password = "aktwlqrkTekrkffo?";
-//		String resp;
-//		
-//		if() {
-//			System.out.println("이메일 불일치");
-//			resp = "";
-//			return resp;
-//		}else {
-//			System.out.println("이메일 일치");
-//			String dice = this.getRandomString();
-//			System.out.println("랜덤문자열 : " + dice);
-//
-//			String recipient = account_email;
-//			String subject = "맛집갔다갈래 회원가입인증 이메일입니다.";
-//			String body = dice + " 인증문자열를 이메일 인증란에 입력하여주시기 바랍니다.";
-//
-//			Properties props = new Properties();
-//			props.put("mail.smtp.host", "smtp.daum.net");
-//			props.put("mail.smtp.socketFactory.port", "465");
-//			props.put("mail.smtp.socketFactory.class",
-//					"javax.net.ssl.SSLSocketFactory");
-//			props.put("mail.smtp.auth", "true");
-//			props.put("mail.smtp.port", "465");
-//
-//			Session session = Session.getDefaultInstance(props,
-//					new javax.mail.Authenticator() {
-//				protected PasswordAuthentication getPasswordAuthentication() {
-//					return new PasswordAuthentication(username,password);
-//				}
-//			});
-//
-//			try {
-//
-//				Message message = new MimeMessage(session);
-//				message.setFrom(new InternetAddress("no-reply@eat-together.net"));
-//				message.setRecipients(Message.RecipientType.TO,
-//						InternetAddress.parse(account_email));
-//				message.setSubject(subject);
-//				message.setText(body);
-//				Transport.send(message);
-//				resp = dice;
-//
-//				System.out.println("OK");
-//			} catch (MessagingException e) {
-//				throw new RuntimeException(e);
-//			}
-//
-//			return resp;
-//		}
-//	}
-	
-	
+
+	//비밀번호 찾기 인증 메일 보내기
+	@RequestMapping("mailSendingForPw")
+	@ResponseBody
+	public String mailSenderForPw(@RequestParam String account_email, @RequestParam String id) throws Exception{
+		String username = "eat-together";
+		String password = "aktwlqrkTekrkffo?";
+		String resp;
+		String inputId = id;
+		String input_account_email = account_email;
+		System.out.println("비밀번호 찾기용 입력한 이메일 : " + account_email);
+		System.out.println("비밀번호 찾기용 입력한 아이디 : " + inputId);
+		
+		MemberDTO mdto = mservice.emailCheck(input_account_email);
+		
+		if(mdto == null) {
+			System.out.println("입력한 이메일과 동일한 회원정보가 존재하지 않음");
+			resp = "";
+			return resp;
+			
+		}else if(!(mdto.getId().contentEquals(inputId))) {
+			System.out.println("아이디와 인증된 이메일의 불일치");
+			resp = "";
+			return resp;
+			
+		}else {
+			System.out.println("아이디와 인증된 이메일 일치");
+			String dice = this.getRandomString();
+			System.out.println("랜덤문자열 : " + dice);
+
+			String recipient = account_email;
+			String subject = "맛집갔다갈래 회원가입인증 이메일입니다.";
+			String body = dice + " 인증문자열를 이메일 인증란에 입력하여주시기 바랍니다.";
+
+			Properties props = new Properties();
+			props.put("mail.smtp.host", "smtp.daum.net");
+			props.put("mail.smtp.socketFactory.port", "465");
+			props.put("mail.smtp.socketFactory.class",
+					"javax.net.ssl.SSLSocketFactory");
+			props.put("mail.smtp.auth", "true");
+			props.put("mail.smtp.port", "465");
+
+			Session session = Session.getDefaultInstance(props,
+					new javax.mail.Authenticator() {
+				protected PasswordAuthentication getPasswordAuthentication() {
+					return new PasswordAuthentication(username,password);
+				}
+			});
+
+			try {
+
+				Message message = new MimeMessage(session);
+				message.setFrom(new InternetAddress("no-reply@eat-together.net"));
+				message.setRecipients(Message.RecipientType.TO,
+						InternetAddress.parse(account_email));
+				message.setSubject(subject);
+				message.setText(body);
+				Transport.send(message);
+				resp = dice;
+
+				System.out.println("Email Sending OK");
+			} catch (MessagingException e) {
+				throw new RuntimeException(e);
+			}
+			System.out.println("컨트롤러에서 resp 전달: " + resp);
+			return resp;
+		}
+	}
+
+
 }

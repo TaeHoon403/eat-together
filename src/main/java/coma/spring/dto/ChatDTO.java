@@ -10,8 +10,13 @@ public class ChatDTO {
 	private Timestamp write_date;
 	private int view_count; 
 	
-	public ChatDTO() {}
-	public ChatDTO(int chatSeq_parent, int seq, String content, String writer, Timestamp write_date, int view_count) {
+	public ChatDTO() {}	
+	public ChatDTO(int chatSeq_parent,
+			int seq, 
+			String content,
+			String writer, 
+			Timestamp write_date, 
+			int view_count) {
 		this.chatSeq_parent = chatSeq_parent;
 		this.seq = seq;
 		this.content = content;
@@ -19,14 +24,7 @@ public class ChatDTO {
 		this.write_date = write_date;
 		this.view_count = view_count;
 	}
-	public ChatDTO(String content, String writer, int seq , int chatSeq_parent) {
-		this.chatSeq_parent = chatSeq_parent;
-		this.seq = seq;
-		this.content = content;
-		this.writer = writer;
-		this.write_date = null;
-		this.view_count = 0;
-	}
+
 	public int getChatSeq_parent() {
 		return chatSeq_parent;
 	}

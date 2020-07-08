@@ -53,7 +53,49 @@
 	<div id=mypage-container>
 		<jsp:include page="/WEB-INF/views/include/menubar.jsp" />
 		<div id=contents>
-		<!-- 컨텐츠 들어가는 공간 -->
+			<table class="table" id="mypage_table">
+				<thead class="thead-dark">
+					<tr>
+						<th scope="col" colspan=12>My Review</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<th scope="row" class="myinfo_text">No.</th>
+						<td class="myinfo_text">리뷰내용</td>
+						<td class="myinfo_text">별점</td>
+					</tr>
+
+					<c:if test="${empty reviewList}">
+						<tr>
+							<td colspan=12 class="myinfo_text">직접 남긴 리뷰가 없습니다. 맛집을 탐방해보세요!</td>
+						</tr>
+						<tr>
+							<td class="myinfo_text"><button type="button" class="btn btn-warning"
+									text-center onclick="location.href='/party/partylist'">모임 검색하기</button></td>
+						</tr>
+					</c:if>
+					<c:if test="${!empty reviewList}">
+						<c:forEach var="i" items="${reviewList}">
+							<tr>
+								<th scope="row">${i.seq}</th>
+								<td class="myinfo_text">${i.content}</td>
+								<td class="myinfo_text">${i.rating}</td>
+							</tr>
+						</c:forEach>
+						<tr>
+							<td colspan=12>
+								<nav id="pagenavi">
+									<ul class="pagination justify-content-center" id="navibtn">
+										${navi}
+									</ul>
+								</nav>
+							</td>
+						</tr>
+					</c:if>
+
+				</tbody>
+			</table>
 		</div>
 	</div>
 

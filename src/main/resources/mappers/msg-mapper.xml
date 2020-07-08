@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="msg">
+	<!-- navi 카운트 -->
+	<select id="getAdminCount" resultType="int">
+		select count(*) from msg
+		where msg_receiver = #{msg_receiver} and msg_sender='administrator'
+		and
+		receiver_del=0
+	</select>
+	<select id="getSenderCount" resultType="int">
+		select count(*) from msg
+		where msg_receiver = #{msg_receiver} and msg_sender!='administrator'
+		and
+		receiver_del=0
+	</select>
+	<select id="getReceiverCount" resultType="int">
+		select count(*) from
+		msg
+		where msg_sender = #{msg_receiver} and
+		sender_del = 0
+	</select>
+	<!--select 문 -->
+
+	<select id="selectBySender" resultType="coma.spring.dto.MsgDTO">
+		select * from (select
+		msg.*, row_number() over(order by msg_date desc)
+		rnum from msg where
+		msg_receiver = #{msg_receiver} and
+		msg_sender!='administrator' and
+		receiver_del=0) where rnum between
+		#{start} and #{end}
+	</select>
+	<select id="selectByAdmin" resultType="coma.spring.dto.MsgDTO">
+		select * from (select
+		msg.*, row_number() over(order by msg_date desc)
+		rnum from msg where
+		msg_receiver =#{msg_receiver} and msg_sender = 'administrator' and
+		receiver_del=0) where rnum between
+		#{start} and #{end}
+	</select>
+	<select id="selectByReceiver"
+		resultType="coma.spring.dto.MsgDTO">
+		select * from (select
+		msg.*, row_number() over(order by
+		msg_date desc)
+		rnum from msg where msg_sender = #{msg_receiver} and
+		sender_del = 0) where rnum between
+		#{start} and #{end}
+	</select>
+
+	<select id="selectBySeq" resultType="coma.spring.dto.MsgDTO">
+		select * from msg where
+		msg_seq= #{value}
+	</select>
+
+	<select id="newmsg" resultType="java.lang.Integer">
+		select count(*) from msg where msg_receiver = #{value} and msg_view=0
+	</select>
+
+	<!--insert 문 -->
+	<insert id="insert">
+		insert into msg
+		values(msg_seq.nextval,#{msg_sender},#{msg_receiver},#{msg_title},#{msg_text},sysdate,0,0,0)
+	</insert>
+
+	<insert id="insertWelcome">
+		insert into msg
+		values(msg_seq.nextval,'administrator',#{value},'가입을축하합니다.','회원 가입을
+		축하합니다.',sysdate,0,0,0)
+	</insert>
+	<!-- 읽음처리 -->
+	<update id="view">
+		update msg set msg_view=1 where msg_seq=#{value}
+	</update>
+	<!-- 보낸사람삭제 -->
+	<update id="sender_del">
+		update msg set sender_del=1 where msg_seq=#{value}
+	</update>
+	<!-- 받는사람삭제 -->
+	<update id="receiver_del">
+		update msg set receiver_del=1 where msg_seq=#{value}
+	</update>
+
+
+</mapper>

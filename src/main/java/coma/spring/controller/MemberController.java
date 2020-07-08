@@ -1,9 +1,6 @@
 package coma.spring.controller;
 
-import java.text.DateFormat;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -14,21 +11,32 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import coma.spring.dto.MemberDTO;
+import coma.spring.dto.MemberFileDTO;
+import coma.spring.service.MemberFileService;
 import coma.spring.service.MemberService;
+import coma.spring.service.MsgService;
 
 @Controller
 @RequestMapping("/member/")
 public class MemberController {
+	//By 지은, 회원서비스 관련 기능을 모아놓은 컨트롤러
 
 	@Autowired
 	private MemberService mservice;
 
+	@Autowired 
+	private MemberFileService mfservice;
+
+	@Autowired
+	private MsgService msgservice;	
+
 	@Autowired
 	private HttpSession session;
 
-	//try-catch 예외처리 대체할 수 있는 메서드, ExceptionHandler
+	//by지은, try-catch 예외처리 대체할 수 있는 메서드, ExceptionHandler_20200701
 	@ExceptionHandler
 	public String exceptionHandler(Exception e) {
 		e.printStackTrace();
@@ -54,10 +62,17 @@ public class MemberController {
 		return "member/signup_info";
 	}
 
-	//마이페이지에서 내정보view로 이동
+	//by지은, 마이페이지에서 내정보view로 이동_20200704
 	@RequestMapping("mypage_myinfo")
-	public String getMyInfoView() {
-		return "member/mypage_myinfo";
+	public ModelAndView getMyInfoView() throws Exception{
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("member/mypage_myinfo");
+		MemberDTO mdto = (MemberDTO) session.getAttribute("loginInfo");
+		String id = mdto.getId();
+
+		mdto = mservice.selectMyInfo(id);
+		mav.addObject("mdto", mdto);
+		return mav;
 	}
 
 	//마이페이지에서 쪽지함으로 이동
@@ -89,18 +104,29 @@ public class MemberController {
 		return "member/editpw";
 	}
 
-	//내정보 수정 페이지로 이동하기
+	//By지은,  내정보 수정 페이지로 이동하기_20200704
 	@RequestMapping("editMyInfo")
-	public String getEditMyInfoView() {
-		return "member/editmyinfo";
+	public ModelAndView getEditMyInfoView()throws Exception {
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("member/editmyinfo");
+
+		MemberDTO mdto = (MemberDTO) session.getAttribute("loginInfo");
+		String id = mdto.getId();
+
+		mdto = mservice.selectMyInfo(id);
+		mav.addObject("mdto", mdto);
+		return mav;
+
 	}
+
 
 	//아이디 찾기 팝업 열기
 	@RequestMapping("findid")
 	public String findId() {
 		return "member/findid";
 	}
-	
+
+
 	//비밀번호 찾기 팝업 열기
 	@RequestMapping("findpw")
 	public String findpw() {
@@ -111,8 +137,16 @@ public class MemberController {
 	//로그아웃하기
 	@RequestMapping("logoutProc")
 	public String logoutProc() {
-		session.invalidate();
-		return "home";
+		//By지은, 카카오톡 로그인의 경우 access_Token 로그아웃이 필요하다_20200705
+		if(session.getAttribute("access_Token")!=null) {
+			mservice.kakaoLogout((String)session.getAttribute("access_Token"));
+			session.invalidate();
+			return "redirect:/";
+			//카카오톡 로그인이 아닌 경우
+		}else {
+			session.invalidate();
+			return "redirect:/";
+		}
 	}
 
 	//회원가입하기
@@ -120,12 +154,14 @@ public class MemberController {
 	public String signUp(MemberDTO mdto)throws Exception {
 
 		int result = mservice.signUp(mdto);
+		//회원가입축하메세지 입니다.
+		int msgresult= msgservice.insertWelcome(mdto.getId());
 		System.out.println("signupProc 비밀번호 : " + mdto.getPw());
 
 		System.out.println("회원가입 성공");
-		return "home";
+		return "redirect:/";
 	}
-	
+
 	//회원가입시 아이디 중복체크
 	@RequestMapping("isIdAvailable")
 	@ResponseBody
@@ -155,18 +191,53 @@ public class MemberController {
 
 		System.out.println("loginResult 결과 : "+ result);
 
+		//by 지은, 로그인 성공시 세션에 값을 저장해준다_20200706
 		if(result==true) {
 			MemberDTO mdto = mservice.selectMyInfo(id);
+			String msg_receiver=mdto.getId();
+			System.out.println("아이디는"+msg_receiver);
+			int newmsg = msgservice.newmsg(msg_receiver);
+			System.out.println("새로운메세지"+newmsg);
 			session.setAttribute("loginInfo", mdto);
+			//새로운메세지 확인
+			session.setAttribute("newMsg", newmsg);
 			System.out.println("로그인 성공");
-			return "home";
+			return "redirect:/";
 		}else {
 			System.out.println("id : " + id);
 			System.out.println("pw : " + protectedpw);
 			System.out.println("로그인 실패");
-			return "home";
+			return "redirect:/";
 		}
 
+	}
+
+	//로그인 시 유효성 검사
+	@RequestMapping("isPwCorrect")
+	@ResponseBody
+	public String isPwCorrect(@RequestParam String id, @RequestParam String pw)throws Exception {
+		System.out.println("id : " + id);
+		String protectedpw = mservice.getSha512(pw);
+		System.out.println("pw : " + protectedpw);
+
+		Map<String, String> param = new HashMap<>();
+		param.put("targetColumn1", "id");
+		param.put("targetValue1", id);
+		param.put("targetColumn2", "pw");
+		param.put("targetValue2", protectedpw);
+
+		boolean result = mservice.logIn(param);
+
+		System.out.println("loginResult 결과 : "+ result);
+
+		//by 지은, 아이디와 입력한 비밀번호가 일치한 경우 correct를 반환, 틀린 경우 uncorrect 반환_20200706
+		if(result==true) {
+			String msg = "correct";
+			return msg;
+		}else {
+			String msg = "uncorrect";
+			return msg;
+		}
 	}
 
 	//회원탈퇴하기
@@ -194,8 +265,16 @@ public class MemberController {
 
 			if(result>0) {
 				System.out.println("회원 탈퇴 완료");
-				session.invalidate();
-				return "home";
+				//By지은, 카카오톡 로그인의 경우 access_Token로그아웃이 필요하다_20200706
+				if(session.getAttribute("access_Token")!=null) {
+					mservice.kakaoLogout((String)session.getAttribute("access_Token"));
+					session.invalidate();
+					return "redirect:/";
+					//카카오톡 로그인이 아닌 경우
+				}else {
+					session.invalidate();
+					return "redirect:/";
+				}
 			}else {
 				System.out.println("회원 탈퇴 실패, 관리자에게 문의하세요.");
 				return "error";
@@ -227,9 +306,10 @@ public class MemberController {
 			param.put("targetValue2", id);
 
 			int result = mservice.editPw(param);
-
 			System.out.println("비밀번호 수정 성공 :" + result);
 			mdto.setPw(newprotectedpw);
+			session.setAttribute("loginInfo", mdto);
+
 			return "/member/editMyInfo";
 		}
 
@@ -239,56 +319,55 @@ public class MemberController {
 
 	//내정보 수정하기
 	@RequestMapping("editMyInfoProc")
-	public String editMyInfoProc(String nickname, String account_email) throws Exception {
+	public ModelAndView editMyInfoProc(String nickname, String birth, String account_email) throws Exception {
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("member/mypage_myinfo");
+
 		MemberDTO mdto = (MemberDTO) session.getAttribute("loginInfo");
 		String id = mdto.getId();
 		System.out.println("수정할 아이디 : " + id);
-		System.out.println("수정할 닉네임 : " + nickname);
+		System.out.println("수정할 생년월일 : " + birth);
 		System.out.println("수정할 이메일 : " + account_email);
 
 		Map<String, String> param = new HashMap<>();
-		param.put("targetColumn1", "nickname");
-		param.put("targetValue1", nickname);
+		param.put("targetColumn1", "birth");
+		param.put("targetValue1", birth);
 		param.put("targetColumn2", "account_email");
 		param.put("targetValue2", account_email);
 		param.put("targetColumn3", "id");
 		param.put("targetValue3", id);
 
 		int result = mservice.editMyInfo(param);
-
-		mdto.setNickname(nickname);
-		mdto.setAccount_email(account_email);
-
 		System.out.println("회원정보수정 결과 1-성공 0-실패 : " + result);
-		return "redirect:/member/mypage_myinfo";
+
+		mdto.setBirth(birth);
+		mdto.setAccount_email(account_email);
+		session.setAttribute("loginInfo", mdto);
+
+		mdto = mservice.selectMyInfo(id);
+		mav.addObject("mdto", mdto);
+		return mav;
+
+
 	}
 
 
-	//	
-	//	@RequestMapping("/kakaologin")
-	//	public String login(@RequestParam("code") String code, HttpSession session) {
-	//		System.out.println("code : "+ code);
-	//	    String access_Token = mservice.getAccessToken(code);
-	//	    System.out.println(access_Token);
-	//	    HashMap<String, Object> userInfo = mservice.getUserInfo(access_Token);
-	//	    System.out.println("login Controller : " + userInfo);
-	//	    
-	//	    //    클라이언트의 이메일이 존재할 때 세션에 해당 이메일과 토큰 등록
-	//	    if (userInfo.get("id") != null) {
-	//	        session.setAttribute("id", userInfo.get("id"));
-	//	        session.setAttribute("access_Token", access_Token);
-	//	    }
-	//	    return "index";
-	//	}
-	//
-	//	
-	//	@RequestMapping("/logout")
-	//	public String logout(HttpSession session) {
-	//	    mservice.kakaoLogout((String)session.getAttribute("access_Token"));
-	//	    session.removeAttribute("access_Token");
-	//	    session.removeAttribute("id");
-	//	    return "index";
-	//	}
+	//카카오톡 로그인하기
+	@RequestMapping("/kakaoLogin")
+	public String kakaoLogin(@RequestParam("code") String code, HttpSession session)throws Exception {
+		System.out.println("code : "+ code);
+		String access_Token = mservice.getAccessToken(code);
+		System.out.println("controller access_token : " + access_Token);
+		MemberDTO mdto = mservice.getloginInfo(access_Token);
+		System.out.println("login Controller : " + mdto);
+
+		//    클라이언트의 이메일이 존재할 때 세션에 해당 이메일과 토큰 등록
+		if (mdto.getId() != null) {
+			session.setAttribute("loginInfo", mdto);
+			session.setAttribute("access_Token", access_Token);
+		}
+		return "redirect:/";
+	}
 
 
 

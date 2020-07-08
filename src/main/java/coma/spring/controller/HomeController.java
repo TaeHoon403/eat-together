@@ -1,24 +1,38 @@
 package coma.spring.controller;
 
-import java.text.DateFormat;
-import java.util.Date;
-import java.util.Locale;
+import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+
+import coma.spring.dto.MemberDTO;
+import coma.spring.service.MsgService;
 
 
 @Controller
 public class HomeController {
-
+	
+	@Autowired
+	private HttpSession session;
+	
+	@Autowired
+	private MsgService msgservice;
+	
 	@RequestMapping("/")
-	public String home() {
+	public String home() throws Exception{
 		
-		return "home";
+
+		
+		if(session.getAttribute("loginInfo")==null) {
+			return "home";
+		}else {
+			MemberDTO mdto = (MemberDTO) session.getAttribute("loginInfo");
+			int newMsg =msgservice.newmsg(mdto.getId());
+			session.setAttribute("newMsg", newMsg);
+			return "home";
+		}
+		
 	}
 	
 	@RequestMapping("error")

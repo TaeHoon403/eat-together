@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Review">
+	<insert id="insert">
+		insert into review
+		values(review_seq.nextval,#{id},#{content},#{rating},sysdate,#{parent_seq})
+	</insert>
+	<insert id="insertFile">
+		insert into review_file
+		values(review_file_seq.nextval,#{sysname},#{oriname},review_seq.currval)
+	</insert>
+	<select id="selectByPseq" resultType="coma.spring.dto.ReviewDTO">
+		select * from review where
+		parent_seq = #{parent_seq} order by 1 desc
+	</select>
+	<select id="selectFileByPseq"
+		resultType="coma.spring.dto.ReviewFileDTO">
+		select * from review_file where parent_seq = #{parent_seq}
+	</select>
+	<!-- by지은, 마이페이지 내부 내리뷰리스트 출력을 위한 select문 작성_20200707 -->
+	<select id="selectById" resultType="coma.spring.dto.ReviewDTO">
+	select * from (select review.*, row_number() over(order by 1 desc) rnum from review where id=#{id}) where rnum between #{start} and #{end}
+	</select>
+	
+	<select id="getMyPageArticleCount" resultType="int">
+	select count(*) from review where id=#{value}
+	</select>
+	<!-- by지은, 마이페이지 내부 내리뷰리스트 출력을 위한 select문 작성_20200707 -->
+</mapper>

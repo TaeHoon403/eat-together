@@ -37,4 +37,9 @@
                     <a href="">1:1문의</a>
                 </div>
             </div> 
+            <div class="row menubtn">
+            	<div class="col">
+            		<a href="" onclick="window.close();">관리자메뉴 닫기</a>
+            	</div>
+            </div>
         </div>

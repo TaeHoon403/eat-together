@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Faq">
+	<select id="getArticleCount" resultType="int">
+	select count(*) from faq
+</select>
+
+<select id="selectByPage" resultType="coma.spring.dto.FaqDTO">
+	select * from (select faq.*, row_number() over(order by seq desc) rnum from faq) where rnum between #{start} and #{end}
+</select>
+
+<insert id="insert">
+	insert into faq values (faq_seq.nextval,#{category},#{title},#{contents},sysdate)
+</insert>
+
+<select id="selectBySeq" resultType="coma.spring.dto.NoticeDTO">
+	select * from faq where seq = #{value} order by seq desc
+</select>
+
+<delete id="delete">
+	delete from faq where seq = #{value}
+</delete>
+
+<update id="update">
+      update faq set ${columnName1} = #{changeValue1}, ${columnName2} = #{changeValue2}, ${columnName3} = #{changeValue3} where ${targetColumn} = #{targetValue}
+ </update>
+</mapper>

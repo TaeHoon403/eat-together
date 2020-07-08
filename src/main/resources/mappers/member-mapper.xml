@@ -3,7 +3,7 @@
 <mapper namespace="Member">
 	<insert id="signUp">
 		insert into member
-		values(#{id},#{pw},#{nickname},#{birth},#{account_email},0,sysdate)
+		values(#{id},#{pw},#{nickname},#{birth},#{account_email},0,sysdate, default)
 	</insert>
 
 	<select id="logIn" resultType="int">
@@ -27,8 +27,8 @@
 		member where id=#{value}
 	</select>
 	<update id="editMyInfo">
-		update member set ${targetColumn1}=#{targetValue1},
-		${targetColumn2}=#{targetValue2} where
+		update member set
+		${targetColumn1}=#{targetValue1}, ${targetColumn2}=#{targetValue2} where
 		${targetColumn3}=#{targetValue3}
 	</update>
 
@@ -41,4 +41,5 @@
 		select * from member where
 		account_email=#{value}
 	</select>
+	
 </mapper>
